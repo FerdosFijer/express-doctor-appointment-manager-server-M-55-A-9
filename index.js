@@ -22,6 +22,7 @@ async function run() {
     await client.connect();
     const db = client.db("Doctor-Appointment-Manager");
     const appointmentsCollection = db.collection("AllAppointments");
+    const bookingCollection = db.collection("booking");
 
     app.get("/appointments", async (req, res) => {
       const result = await appointmentsCollection.find().toArray();
@@ -33,7 +34,7 @@ async function run() {
       const result = await appointmentsCollection.findOne({ _id : new ObjectId(id) });
       res.json(result);
     })
-    app.path("/appointments/:id", async (req, res) =>{
+    app.patch("/appointments/:id", async (req, res) =>{
       const {id} = req.param;
       const result = await appointmentsCollection.updateOne(
         {_id : new Object}
@@ -45,6 +46,27 @@ async function run() {
         const result = await appointmentsCollection.deleteOne({_id: new ObjectId(id)})
         res.send(result)
     })
+    app.get("/booking/:userId",  async (req, res)=>{
+      const {userId} = req.params;
+      const result = await bookingCollection.find({userId: userId}).toArray();
+      res.json(result);
+    })
+    app.post("/booking", async (req, res)=> {
+        const newBookingData = req.body;
+        console.log(newBookingData);
+        const result = await bookingCollection.insertOne(newBookingData);
+        res.json(result);
+    })
+    app.delete("/booking/:bookingId",  async (req, res) =>{
+        const {bookingId}= req.params;
+        console.log(bookingId);
+        
+        const result = await bookingCollection.deleteOne({_id: new ObjectId(bookingId)})
+        res.json(result); 
+    })
+
+
+
 
 
     await client.db("admin").command({ ping: 1 });
