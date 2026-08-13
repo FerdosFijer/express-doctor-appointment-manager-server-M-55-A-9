@@ -69,7 +69,7 @@ async function run() {
         const result = await appointmentsCollection.deleteOne({_id: new ObjectId(id)})
         res.send(result)
     })
-    app.get("/booking/:userId",  async (req, res)=>{
+    app.get("/booking/:userId",verifyToken,  async (req, res)=>{
       const {userId} = req.params;
       const result = await bookingCollection.find({userId: userId}).toArray();
       res.json(result);
